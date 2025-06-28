@@ -1,2 +1,2 @@
-[Watch the video](DemoVideo_.mp4)
+[▶️ Watch Demo Video](./DemoVideo_.mp4)
 
