@@ -144,8 +144,6 @@ Visit the app at: [http://localhost:5172](http://localhost:5172)
 
 ## 🖼️ 8. User Interface Overview
 
-## 🖼️ 8. User Interface Overview
-
 ### 🏠 Home Page
 Displays featured/popular courses  
 ![Home Page](./Images/Home.png)
