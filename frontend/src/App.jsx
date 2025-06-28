@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useState, useEffect, createContext } from "react";
 
 import "./App.css";
@@ -8,63 +8,60 @@ import Register from "./components/common/Register";
 import Dashboard from "./components/common/Dashboard";
 import CourseContent from "./components/user/student/CourseContent";
 
+// Creating global context to share user data
 export const UserContext = createContext();
 
 function App() {
-  const date = new Date().getFullYear();
-  const [userData, setUserData] = useState();
+  const currentYear = new Date().getFullYear();
+  const [userData, setUserData] = useState(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
-  const getData = async () => {
+  // Retrieve user data from localStorage on load
+  const getUserData = async () => {
     try {
       const user = await JSON.parse(localStorage.getItem("user"));
-      if (user && user !== undefined) {
+      if (user) {
         setUserData(user);
         setUserLoggedIn(true);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error retrieving user data:", error);
     }
   };
 
   useEffect(() => {
-    getData();
+    getUserData();
   }, []);
 
   return (
     <UserContext.Provider value={{ userData, userLoggedIn }}>
       <div className="App">
-        <Router>
-          <div className="content">
-            <Routes>
-              <Route exact path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              {/* <Route path="/about" element={<About />} />
-            <Route path="/forgotpassword" element={<ForgotPassword />} /> */}
-              {userLoggedIn ? (
-                <>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/courseSection/:courseId/:courseTitle" element={<CourseContent />} />
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
+            {userLoggedIn && (
+              <>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route
+                  path="/courseSection/:courseId/:courseTitle"
+                  element={<CourseContent />}
+                />
+              </>
+            )}
+          </Routes>
+        </div>
 
-                </>
-              ) : (
-                <Route path="/login" element={<Login />} />
-              )}
-            </Routes>
+        <footer className="bg-light text-center text-lg-start">
+          <div className="text-center p-3">
+            © {currentYear} Copyright: Study App
           </div>
-          <footer className="bg-light text-center text-lg-start">
-            <div className="text-center p-3">
-              © {date} Copyright: Study App
-            </div>
-          </footer>
-        </Router>
+        </footer>
       </div>
     </UserContext.Provider>
   );
 }
 
 export default App;
-
-
