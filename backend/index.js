@@ -1,37 +1,37 @@
-const express = require('express')
-const cors = require('cors')
-const dotenv = require('dotenv')
-const DBConnection = require('./config/connect')
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const DBConnection = require('./config/connect');
 const path = require("path");
-const fs = require('fs')
+const fs = require('fs');
 
-const app = express()
-dotenv.config()
+const app = express();
+dotenv.config();
 
-//////connection of DB/////////
-DBConnection()
+////// Connect MongoDB ///////
+DBConnection();
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT || 8000; // fallback to 8000 if not set
 
+////// CORS Setup BEFORE routes ///////
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://Siva6918.github.io'],
+  credentials: true
+}));
 
-//////middleware/////////
-app.use(express.json())
-app.use(cors())
+////// Middleware ///////
+app.use(express.json());
 
+////// Static Uploads Directory ///////
 const uploadsDir = path.join(__dirname, "uploads");
-
-// Create uploads folder if it doesn’t exist
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
+app.use("/uploads", express.static(uploadsDir));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+////// Routes ///////
+app.use('/api/admin', require('./routers/adminRoutes'));
+app.use('/api/user', require('./routers/userRoutes'));
 
-
-///ROUTES///
-app.use('/api/admin', require('./routers/adminRoutes'))
-app.use('/api/user', require('./routers/userRoutes'))
-
-
-
-app.listen(PORT, () => console.log(`running on ${PORT}`))
+////// Start Server ///////
+app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
